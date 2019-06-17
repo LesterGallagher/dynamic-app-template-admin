@@ -1,0 +1,45 @@
+
+.wrapper {
+    position: relative;
+}
+
+.CollapsibleList {
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.CollapsibleList.open {
+    max-height: 2000px;   
+    transition: max-height 500ms ease-in;
+}
+
+.CollapsibleList.open .primaryBar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    width: 5px;
+    background-color: #93c54b;
+}
+
+.CollapsibleList.open .listItem, .CollapsibleList.open .title {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.listItem > * {
+    padding-left: 10px;
+    display: block;
+    color: #fff;
+}
+
+.title {
+    display: block;
+    cursor: pointer;
+}
+
+.hideBar {
+    display: none;
+}
+
