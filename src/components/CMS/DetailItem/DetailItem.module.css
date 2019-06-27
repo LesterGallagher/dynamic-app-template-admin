@@ -3,6 +3,10 @@
     
 }
 
+.DetailItem :global(legend) {
+    display: none;
+}
+
 .autocomplete input {
     display: block;
     width: 100%;

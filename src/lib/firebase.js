@@ -15,7 +15,8 @@ var firebaseConfig = {
 };
 
 // Initialize firebase instance
-firebase.initializeApp(firebaseConfig)
+firebase.initializeApp(firebaseConfig);
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
 
 // Initialize other services on firebase instance
 firebase.firestore() // <- needed if using firestore

@@ -8,6 +8,7 @@ import * as ROUTES from '../constants/routes';
 import propTypes from 'prop-types';
 import SpecificAppComponent from '../components/SpecificApp/SpecificApp';
 import CMS from './CMS';
+import { defaultAppPublic } from '../constants/app-public';
 
 class SpecificApp extends Component {
     constructor(props) {
@@ -18,13 +19,12 @@ class SpecificApp extends Component {
 
 
     render() {
-        const { match: { params: { appId } }, uiTemplate, appPublic } = this.props;
+        const { match: { params: { appId } }, auth: { uid } } = this.props;
+        console.log('SPECIFIC APP', this.props)
         return (<Page>
             <SpecificAppComponent
-                renderCMS={() => <CMS appKey={appId} />} 
-                appKey={appId} 
-                uiTemplate={uiTemplate} 
-                appPublic={appPublic} />
+                renderCMS={() => <CMS adminId={uid} appKey={appId} />} 
+                appKey={appId} />
         </Page>);
     }
 }
@@ -33,16 +33,13 @@ const enhance = compose(
     connect(({ firebase: { auth } }) => ({ auth })),
     firebaseConnect(({ match: { params: { appId } }, auth }) => ([
         `/users/${auth.uid}/apps/${appId}/public`,
-        `/users/${auth.uid}/apps/${appId}/uiTemplate`
     ])),
     connect(({ appKey, firebase, firebase: { auth } }) => ({
-        appPublic: get(firebase, `users/${auth.uid}/apps/${appKey}/public`, null),
-        uiTemplate: get(firebase, `users/${auth.uid}/apps/${appKey}/uiTemplate`, null)
+        appPublic: get(firebase, `users/${auth.uid}/apps/${appKey}/public`, defaultAppPublic),
     }))
 )
 
 SpecificApp.propTypes = {
-    uiTemplate: propTypes.any,
     appPublic: propTypes.any,
 };
 

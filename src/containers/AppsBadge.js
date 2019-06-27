@@ -6,7 +6,6 @@ import { compose } from 'redux';
 import { get } from 'lodash';
 import * as ROUTES from '../constants/routes';
 import { defaultAppPublic } from '../constants/app-public';
-import { defaultUITemplate } from '../constants/ui-template';
 
 class AppsBadge extends Component {
     constructor(props) {
@@ -14,10 +13,10 @@ class AppsBadge extends Component {
         this.state = {}
     }
     render() {
-        const { appKey, uiTemplate, appPublic } = this.props;
+        const { appKey, appPublic } = this.props;
         const linkTo = ROUTES.SPECIFIC_APP.replace(':appId', appKey);
         return (<div>
-            <AppsBadgeComponent linkTo={linkTo} uiTemplate={uiTemplate} appPublic={appPublic} appKey={appKey} />
+            <AppsBadgeComponent linkTo={linkTo} appPublic={appPublic} appKey={appKey} />
         </div>);
     }
 }
@@ -26,11 +25,9 @@ const enhance = compose(
     connect(({ firebase: { auth } }) => ({ auth })),
     firebaseConnect(({ appKey, auth }) => ([
         `/users/${auth.uid}/apps/${appKey}/public`,
-        `/users/${auth.uid}/apps/${appKey}/uiTemplate`
     ])),
     connect((state, props) => ({
         appPublic: get(state.firebase, `users/${state.firebase.auth.uid}/apps/${props.appKey}/public`, defaultAppPublic),
-        uiTemplate: get(state.firebase, `users/${state.firebase.auth.uid}/apps/${props.appKey}/uiTemplate`, defaultUITemplate)
     })),
 )
 

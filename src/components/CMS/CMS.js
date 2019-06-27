@@ -37,7 +37,7 @@ class CMS extends Component {
             const active = !!matchPath(this.props.location.pathname, path);
 
             return (
-                <NavLink className={classNames([styles.menuItem])} key={path} active={active} to={path} href={path}>
+                <NavLink className={classNames([styles.menuItem])} key={path} to={path} href={path}>
                     {title}
                 </NavLink>
             );
@@ -49,7 +49,7 @@ class CMS extends Component {
         const active = !!matchPath(this.props.location.pathname, settingsPath);
 
         return (
-            <NavLink className={classNames([styles.menuItem])} key={settingsPath} active={active} to={settingsPath} href={settingsPath} key="settings">
+            <NavLink className={classNames([styles.menuItem])} key={settingsPath} to={settingsPath} href={settingsPath} key="settings">
                 Instellingen
             </NavLink>
         );
@@ -133,7 +133,7 @@ class CMS extends Component {
                                             <FormControl componentClass="select" onChange={({ target: { value } }) => this.props.onDeviceChange(devices[+value])}>
                                                 {devices.map((device, i) => {
                                                     return (
-                                                        <option value={i}>{device.label}</option>
+                                                        <option key={i} value={i}>{device.label}</option>
                                                     );
                                                 })}
                                             </FormControl>
@@ -169,7 +169,7 @@ CMS.propTypes = {
     appUrl: propTypes.string.isRequired,
     icons: propTypes.arrayOf(propTypes.string).isRequired,
     onDeviceChange: propTypes.func.isRequired,
-    devices: propTypes.object.isRequired,
+    devices: propTypes.arrayOf(propTypes.object).isRequired,
     deviceClassName: propTypes.string.isRequired
 };
 

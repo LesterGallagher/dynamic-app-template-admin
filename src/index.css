@@ -33,3 +33,7 @@ code {
 .p10 {
   padding: 10px;
 }
+
+.device-header {
+  pointer-events: none;
+}

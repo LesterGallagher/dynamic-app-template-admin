@@ -11,15 +11,18 @@ import reducer from './reducers';
 
 const middleware = applyMiddleware(promise, thunk, logger);
 
+const rmUndefined = obj => Object.keys(obj).forEach(key => obj[key] === undefined ? delete obj[key] : '');
+
 // react-redux-firebase config
 const rrfConfig = {
     userProfile: 'users',
     attachAuthIsReady: true,
     profileFactory: (userData, profileData) => {
         const { user } = userData;
+        console.log('USERDATA', userData)
         return {
             public: {
-                ...user
+                ...rmUndefined(user)
             }
         }
     }

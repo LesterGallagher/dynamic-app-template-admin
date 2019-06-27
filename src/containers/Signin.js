@@ -5,7 +5,8 @@ import { Grid, Row, Col, Panel } from 'react-bootstrap';
 import { withFirebase, firebaseConnect } from 'react-redux-firebase';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class Singin extends Component {
     constructor(props) {
@@ -14,12 +15,29 @@ class Singin extends Component {
 
     }
 
-    onEmailLoginClick = e => {
+    onEmailLogin = async ({ email, password }) => {
+        try {
+            const result = await this.props.firebase.login({
+                signIn: false,
+                email,
+                password
+            });
 
+            toast('Succesvol ingelogd!');
+        } catch (err) {
+            alert(err);
+        }
     }
 
-    onEmailRegisterClick = e => {
+    onEmailRegister = async ({ email, password }) => {
+        console.log('ON REGISTER')
+        try {
+            const result = await this.props.firebase.createUser({ email, password })
 
+            toast('Succesvol geregistreerd!');
+        } catch (err) {
+            alert(err);
+        }
     }
 
     onGoogleLoginClick = async e => {
@@ -27,8 +45,10 @@ class Singin extends Component {
             const result = await this.props.firebase.login({
                 provider: 'google',
                 type: 'redirect'
-            })
-        } catch(err) {
+            });
+
+            toast('Succesvol ingelogd!');
+        } catch (err) {
             alert(err);
         }
     }
@@ -44,12 +64,10 @@ class Singin extends Component {
                                 <Panel.Heading>Login</Panel.Heading>
                                 <Panel.Body>
                                     <SigninComponent
-                                        onEmailLoginClick={this.onEmailLoginClick}
-                                        onEmailRegisterClick={this.onEmailRegisterClick}
+                                        onEmailLogin={this.onEmailLogin}
+                                        onEmailRegister={this.onEmailRegister}
                                         onGoogleLoginClick={this.onGoogleLoginClick}
                                     />
-
-
                                 </Panel.Body>
                             </Panel>
                         </Col>

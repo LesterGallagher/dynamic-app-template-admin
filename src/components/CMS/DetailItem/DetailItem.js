@@ -9,13 +9,18 @@ import draftToMarkdown from 'draftjs-to-markdown';
 import { get } from 'lodash';
 import Autocomplete from 'react-autocomplete';
 import 'onsenui/css/material-design-iconic-font/css/material-design-iconic-font.css';
+import SchemaForm from "react-jsonschema-form";
+import schema from './schema';
+import uiSchema from './ui-schema';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const defaultAutoCompleteConfig = {
     borderRadius: '3px',
     boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
     background: 'rgba(255, 255, 255, 0.9)',
     padding: '2px 0',
-    fontSize: '90%',
+    fontSize: '16px',
     position: 'fixed',
     overflow: 'auto',
     maxHeight: '50%',
@@ -62,7 +67,7 @@ class DetailItem extends Component {
 
     save = () => {
         console.log(this);
-        const { editorState, page: { id }, page } = this;
+        const { editorState, page } = this;
         const { setPage } = this.props;
         const { icon } = this.state;
         const frontmatter = Object.assign({}, page.frontmatter);
@@ -88,7 +93,16 @@ class DetailItem extends Component {
         this.setState({ page });
 
         console.log(page);
-        setPage(id, page);
+        setPage(page);
+    }
+
+    handleError = e => {
+        console.log(e);
+        toast('Er zijn problemen met je formulier :( Scroll naar de bovenkant van het formulier om ze te bekijken.')
+    }
+
+    handleChange = ({ formData }) => {
+        Object.assign(this.page, formData);
     }
 
     render() {
@@ -99,24 +113,37 @@ class DetailItem extends Component {
             <div className={styles.DetailItem} style={{ marginTop: "60px" }}>
                 <h2>{title}</h2>
 
-                <div className={styles.autocomplete}>
-                    <Autocomplete
-                        menuStyle={defaultAutoCompleteConfig}
-                        getItemValue={item => item}
-                        items={this.icons}
-                        renderItem={(item, isHighlighted) =>
-                            <div key={item} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                                <span className={`zmdi ${item.replace('md', 'zmdi')}`}> {item.replace('md-', '')}</span>
-                            </div>
-                        }
-                        shouldItemRender={item => this.state.icon.length > 2 && item.includes(this.state.icon)}
-                        value={this.state.icon}
-                        onChange={(e) => this.setState({ icon: e.target.value })}
-                        onSelect={icon => this.setState({ icon })}
-                    />
-                </div>
+                <SchemaForm
+                    formData={this.page}
+                    schema={schema}
+                    uiSchema={uiSchema}
+                    onChange={this.handleChange}
+                    onError={this.handleError}>
+                    <div>
+                        <button hidden type="submit">Submit</button>
+                        <button hidden type="button">Cancel</button>
+                    </div>
+                </SchemaForm>
 
-
+                <label>
+                    Icon: <br />
+                    <div className={styles.autocomplete}>
+                        <Autocomplete
+                            menuStyle={defaultAutoCompleteConfig}
+                            getItemValue={item => item}
+                            items={this.icons}
+                            renderItem={(item, isHighlighted) =>
+                                <div key={item} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+                                    <span className={`zmdi ${item.replace('md', 'zmdi')}`}> {item.replace('md-', '')}</span>
+                                </div>
+                            }
+                            shouldItemRender={item => this.state.icon.length > 2 && item.includes(this.state.icon)}
+                            value={this.state.icon}
+                            onChange={(e) => this.setState({ icon: e.target.value })}
+                            onSelect={icon => this.setState({ icon })}
+                        />
+                    </div>
+                </label>
                 <Grid fluid>
                     <Row>
                         <Col>

@@ -54,15 +54,15 @@ class ActionButtons extends Component {
                 <ButtonToolbar>
                     <ButtonGroup>
                         <Button onClick={() => this.setState({ show: true })} bsSize="small" bsStyle="primary">
-                            <Glyphicon glyph="plus" />
+                            <Glyphicon glyph="plus" /> Pagina Toevoegen
                         </Button>
                     </ButtonGroup>
-                    <ToggleButtonGroup type="radio" name="options" defaultValue={1}>
+                    {/* <ToggleButtonGroup type="radio" name="options" defaultValue={1}>
                         <ToggleButton value={1} bsSize="small"><Glyphicon glyph="sort-by-alphabet" /></ToggleButton>
                         <ToggleButton value={2} bsSize="small"><Glyphicon glyph="sort-by-alphabet-alt" /></ToggleButton>
                         <ToggleButton value={3} bsSize="small"><Glyphicon glyph="sort-by-order" /></ToggleButton>
                         <ToggleButton value={4} bsSize="small"><Glyphicon glyph="sort-by-order-alt" /></ToggleButton>
-                    </ToggleButtonGroup>
+                    </ToggleButtonGroup> */}
                 </ButtonToolbar>
 
                 <Modal show={this.state.show} onHide={this.handleClose}>

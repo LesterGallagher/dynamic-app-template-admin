@@ -23,9 +23,9 @@ class CollapsibleList extends Component {
                     {title}
                 </div>
                 <ul className={classNames({ [styles.open]: open, [styles.CollapsibleList]: true })}>
-                    {(children || []).map(child => {
+                    {(children || []).map((child, i) => {
                         return (
-                            <li className={styles.listItem}>
+                            <li key={i} className={styles.listItem}>
                                 {child}
                             </li>
                         );

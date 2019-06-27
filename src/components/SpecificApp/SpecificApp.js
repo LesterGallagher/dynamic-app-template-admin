@@ -29,7 +29,6 @@ class SpecificApp extends Component {
 
 SpecificApp.propTypes = {
     appKey: propTypes.string.isRequired,
-    uiTemplate: propTypes.any,
     appPublic: propTypes.any,
     renderCMS: propTypes.func.isRequired
 };

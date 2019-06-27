@@ -1,14 +1,12 @@
 export default [
     {
-        className: 'iphone-x',
-        isIPhoneX: true,
+        className: 'device-iphone-x',
         platform: 'ios',
         label: 'IPhone X',
         options: []
     },
     {
-        className: 'device-iphone-8 device-gold',
-        isIPhoneX: false,
+        className: 'device-iphone-8',
         platform: 'ios',
         options: [
             { label: 'Silver', className: 'device-silver' },
@@ -19,14 +17,14 @@ export default [
     },
     {
         className: 'device-google-pixel-2-xl',
-        isIPhoneX: false,
+        
         platform: 'android',
         label: 'Google Pixel 2 XL',
         options: []
     },
     {
         className: 'device-google-pixel',
-        isIPhoneX: false,
+        
         platform: 'android',
         label: 'Google Pixel',
         options: [
@@ -37,7 +35,7 @@ export default [
     },
     {
         className: 'device-galaxy-s8',
-        isIPhoneX: false,
+        
         platform: 'android',
         label: 'Samsung Galaxy S8',
         options: [
@@ -47,7 +45,7 @@ export default [
     },
     {
         className: 'device-ipad-pro',
-        isIPhoneX: false,
+        
         platform: 'ios',
         label: 'iPad Pro',
         options: [

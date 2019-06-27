@@ -40,7 +40,7 @@ class AppsList extends Component {
         const { uid } = this.props.auth;
         const response = await fetch(`https://dynamic-template-app.firebaseio.com/users/${uid}/apps.json?shallow=true&auth=${idToken}`);
         const map = await response.json();
-        const keys = Object.keys(map);
+        const keys = Object.keys(map || {});
 
         this.setState({ keys, loading: false });
     }

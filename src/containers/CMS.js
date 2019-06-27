@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Page from './Page';
 import { Link } from 'react-router-dom';
-import { withFirebase, firebaseConnect, firestoreConnect, withFirestore } from 'react-redux-firebase';
+import { withFirebase, firebaseConnect, firestoreConnect, withFirestore, isLoaded, isEmpty } from 'react-redux-firebase';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { get } from 'lodash';
@@ -11,7 +11,7 @@ import { defaultAppPublic } from '../constants/app-public';
 import _slugify from 'slugify';
 import { compose as recompose, withHandlers, withStateHandlers, lifecycle } from 'recompose'
 import propTypes from 'prop-types';
-import { createDefaultAppPages, createNewAppPage } from '../lib/app-pages';
+import { createNewAppPage } from '../lib/app-pages';
 import 'devices.css/dist/devices.css'
 import icons from '../constants/icons';
 import devices from '../constants/devices';
@@ -23,16 +23,41 @@ const slugify = str => _slugify(str, {
 });
 
 class CMS extends Component {
+
+    createDefaultAppPages = false;
+    createDefaultAppPublic = false;
+
     constructor(props) {
         super(props);
         this.state = {
-
-            isIPhoneX: true,
             deviceClassName: 'device-iphone-x',
             platform: 'ios'
         }
 
         console.log(props.appPublic)
+    }
+
+    ensureDefaultDataIsInDatabase = () => {
+        const { setAppPublic, appPublic, appPages, setPage, appKey } = this.props;
+        if (isLoaded(appPublic) && !appPublic) {
+            if (this.createDefaultAppPublic) return;
+            else this.createDefaultAppPublic = true;
+            setAppPublic(defaultAppPublic);
+        }
+        if (isLoaded(appPages) && !appPages) {
+            if (this.createDefaultAppPages) return;
+            else this.createDefaultAppPages = true;
+            const newPage = createNewAppPage('Home', appKey, true);
+            setPage(newPage);
+        }
+    }
+
+    componentDidMount = () => {
+        this.ensureDefaultDataIsInDatabase();
+    }
+
+    componentDidUpdate = () => {
+        this.ensureDefaultDataIsInDatabase();
     }
 
     createPagePath = ({ frontmatter: { title } }) => {
@@ -46,22 +71,25 @@ class CMS extends Component {
     onNewPage = ({ name }) => {
         const { appKey } = this.props;
         const newPage = createNewAppPage(name, appKey);
-        this.props.setPage(newPage.id, newPage);
+        this.props.setPage(newPage);
     }
 
     onDeviceChange = device => {
         this.setState({
             deviceClassName: device.className,
             platform: device.platform,
-            isIPhoneX: device.isIPhoneX
+            label: device.label,
+            options: device.options
         })
     }
 
     render() {
-        const { isIPhoneX, platform, deviceClassName } = this.state;
+        const { platform, deviceClassName } = this.state;
         const { appPublic, appPages, appKey, setPage, auth, setAppPublic } = this.props;
 
-        const appUrl = `${process.env.REACT_APP_APP_DOMAIN}/${auth.uid}/${appKey}/${isIPhoneX}/${platform}`;
+        const appUrl = `${process.env.REACT_APP_APP_DOMAIN}/?cacheBust=${deviceClassName}#/${auth.uid}/${appKey}/${deviceClassName}/${platform}`;
+
+        console.log('APP_PAGES', appPages);
 
         return (
             <CMSComponent
@@ -69,7 +97,7 @@ class CMS extends Component {
                 createPagePath={this.createPagePath}
                 appPublic={appPublic || defaultAppPublic}
                 appKey={appKey}
-                appPages={appPages}
+                appPages={getPages(appPages, appKey)}
                 onNewPage={this.onNewPage}
                 appUrl={appUrl}
                 setAppPublic={setAppPublic}
@@ -83,13 +111,12 @@ class CMS extends Component {
     }
 }
 
-const getPages = (appPages, appKey) => {
-    if (typeof appPages === 'object' && appPages !== null) {
+const getPages = (appPages) => {
+    if (isLoaded(appPages) && typeof appPages === 'object' && appPages !== null) {
         const array = Object.keys(appPages).map(id => ({ id, ...appPages[id] }));
-        if (!array || array.length === 0) return createDefaultAppPages(appKey);
-        else return array;
-    } else if (appPages === null) return createDefaultAppPages(appKey);
-    else return [];
+        if (array && array.length > 0) return array;
+    }
+    return [];
 }
 
 const enhance = compose(
@@ -103,13 +130,13 @@ const enhance = compose(
     firebaseConnect(({ auth, appKey }) => [
         console.log(`users/${auth.uid}/apps/${appKey}/public`) || `users/${auth.uid}/apps/${appKey}/public`
     ]),
-    connect(({ firebase, firestore: { data: { appPages } } }, { appKey, auth }) => ({
-        appPublic: get(firebase.data, ['users', auth.uid, 'apps', appKey, 'public'], defaultAppPublic),
-        appPages: getPages(appPages, appKey)
+    connect(({ firebase: { data: { users } }, firestore: { data: { appPages } } }, { appKey, adminId }) => ({
+        appPublic: isLoaded(users) ? get(users, [adminId, 'apps', appKey, 'public'], null) : users,
+        appPages: appPages
     })),
     withHandlers({
-        setPage: props => (id, payload) => {
-            return console.log(payload) || props.firestore.set(`appPages/${id}`, payload);
+        setPage: props => (page) => {
+            return console.log(page) || props.firestore.set(`appPages/${page.id}`, page);
         },
         setAppPublic: ({ firebase, appKey, auth: { uid } }) => (payload) => {
             return console.log(payload) || firebase.set(`users/${uid}/apps/${appKey}/public`, payload);
@@ -119,9 +146,9 @@ const enhance = compose(
 
 CMS.propTypes = {
     setPage: propTypes.func.isRequired,
-    appPages: propTypes.array.isRequired,
-    appPublic: propTypes.object.isRequired,
+    appPublic: propTypes.object,
     appKey: propTypes.string.isRequired,
+    adminId: propTypes.string.isRequired,
     auth: propTypes.object.isRequired,
     setAppPublic: propTypes.func.isRequired,
 }

@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
 import { connect } from 'react-redux';
-import Page from './containers/Page';
-import Routes from './containers/Routes';
-import { compose } from 'C:/Users/HP/AppData/Local/Microsoft/TypeScript/3.5/node_modules/redux';
+import Routes from './Routes';
+import { compose } from 'redux';
 import { firebaseConnect } from 'react-redux-firebase';
 import { ToastContainer } from 'react-toastify';
 

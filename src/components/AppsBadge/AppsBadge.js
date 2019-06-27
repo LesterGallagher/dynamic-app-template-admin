@@ -37,7 +37,6 @@ class AppsBadge extends Component {
 
 AppsBadge.propTypes = {
     appKey: propTypes.string.isRequired,
-    uiTemplate: propTypes.any,
     appPublic: propTypes.any,
     linkTo: propTypes.string
 };
