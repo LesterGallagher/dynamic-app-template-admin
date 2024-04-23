@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "bootswatch": "^3.4.1",
-    "gh-pages": "^2.0.1",
+    "gh-pages": "^5.0.0",
     "immutable": "^4.0.0-rc.12",
     "onsenui": "^2.10.8",
     "prop-types": "^15.7.2",
